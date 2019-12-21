@@ -1,3 +1,4 @@
+import sys
 import heapq
 #from collections import defaultdict
 import binascii
@@ -37,20 +38,20 @@ with open("hi.txt", "rb") as f:
 huff = encode(dict)
 
 
-print("Symbol".ljust(10) + "Weight".ljust(10) + "Huffman Code")
-for p in huff:
-    print(p[0], end=" ")
-    print('\t', end=" ")
-    print(str(dict[p[0]]), end=" ")
-    print('\t', end=" ")
-    print(p[1], end=" ")
-    print("")
+#print("Symbol".ljust(10) + "Weight".ljust(10) + "Huffman Code")
+#for p in huff:
+ #   print(p[0], end=" ")
+  #  print('\t', end=" ")
+   # print(str(dict[p[0]]), end=" ")
+   # print('\t', end=" ")
+   # print(p[1], end=" ")
+   # print("")
 
 
 dict = {}
 for p in huff:
     dict[p[0]] = p[1]
-print(dict)
+#print(dict)
 
 ############################################################################################################################
 #print(huff(a))
@@ -58,9 +59,6 @@ print(dict)
 
 def bits2a(b):
     return ''.join(chr(int(''.join(x), 2)) for x in zip(*[iter(b)]*8))
-
-#def a2bits(test_str):
- #   return ''.join(format(ord(i), 'b') for i in test_str)
 
 def a2bits(chars):
     return bin(reduce(lambda x, y: (x << 8)+y, (ord(c) for c in chars), 1))[3:]
@@ -74,16 +72,71 @@ with open("hi.txt", "rb") as f:
 
         byte = f.read(1)
 
+### padding
+padding = 0
 while (len(out) % 8 != 0 ):
     zero = '0'
     out = out + zero
+    padding = padding + 1
     
 count = len(out)
-print(count)
-print("#################################")
-print(out)
-print(bits2a(out))
-print(a2bits(bits2a(out)))
+#print(count)
+#print("###########################################################################################################################")
+
+t1 = out
+#print(out)
+#print(bits2a(out))
+
+#t2 = a2bits(bits2a(out))
+#print(a2bits(bits2a(out)))
 
 
-#with open("ouput.txt", "w") as o:
+###
+
+#print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+with open("ouput", "w", encoding="utf_8") as o:
+    o.write(bits2a(out))
+    o.close
+
+with open("ouput", "r", encoding="utf_8") as o:
+    content = o.read()
+    o.close
+
+for i in range(len(content)):
+    if content[i] != bits2a(out)[i]:
+        print("hi")
+        #print(bits2a(out)[i])
+        #print(content[i])
+    
+
+
+if content == bits2a(out):
+    print("hmmmmmmmmmmmmmmmmm2?")
+
+bits = a2bits(content)
+t2 = bits
+#print(bits)
+
+### decoding
+temp =''
+
+dict = {v: k for k, v in dict.items()} # reversing the dict
+
+with open("ouput_d.txt", "wb") as o:
+    for i in range(len(bits) - padding):
+        temp = temp + bits[i]
+        #print(temp)
+        if temp in dict:
+           # print(temp)
+            o.write(dict[temp])
+            temp = ''
+o.close
+
+
+#ERROR IN WRITING FILE
+
+#print(padding)
+
+#print("hi?")
+if t1 == t2 :
+    print("HELLLLLLLLLL YHHHHHHHHHHH")
