@@ -2,8 +2,9 @@ import heapq
 from functools import reduce
 import pickle
 
+import sys
 
-filename = "quarter.txt"
+filename = "sami.txt"
 
 def encode(frequency):
     heap = [[weight, [symbol, '']] for symbol, weight in frequency.items()]
@@ -71,6 +72,9 @@ while (len(out) % 8 != 0 ):
     padding = padding + 1
     
 vip = bits2a(out)
+
+print(type(dict))
+print(sys.getsizeof(dict))
 
 with open('objs.pkl', 'wb') as f:
         pickle.dump([vip,dict,padding], f)
