@@ -20,15 +20,15 @@ while len(dir_list) != 0:
     current_file = dir_list.pop()
     print(current_file)
     list = os.listdir(current_file)
-
+    print("NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
     for item in list :
         #print(item)
         temp = current_file + slash + str(item)
         if os.path.isfile(temp):
-            dict[temp].append(item)
+            dict[current_file].append(item)
         else :
             temp = current_file + slash + str(item)
-            print("dir is ="+temp)
+            print("dir is = "+temp)
             dir_list.append(temp)
 
     filename = filename + slash + str(current_file)

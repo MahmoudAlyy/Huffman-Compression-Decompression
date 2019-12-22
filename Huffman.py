@@ -136,52 +136,51 @@ def compress(filename) :
     start_time = time.time()
 
     
-    # os.path.isdir(fpath)
+    if os.path.isdir(filename) :
+        file_compress(filename)
+    else :
 
-    dict = countFreq(filename)
+        dict = countFreq(filename)
 
-    ########## BASEMMMMMM
-    root = huffman(dict)[1]
+        ########## BASEMMMMMM
+        root = huffman(dict)[1]
 
-    huffTreeCode(root)
+        huffTreeCode(root)
 
-    codes = saveCodes(root)
-
-
-
-######################## EDITING
-    out =''
-    with open(filename, "rb") as f:
-        byte = f.read(1)
-        while byte:
-            temp = codes[byte]
-            out = out + temp
+        codes = saveCodes(root)
+        out =''
+        with open(filename, "rb") as f:
             byte = f.read(1)
+            while byte:
+                temp = codes[byte]
+                out = out + temp
+                byte = f.read(1)
 
-    ### padding
-    padding = 0
-    while (len(out) % 8 != 0 ):
-        zero = '0'
-        out = out + zero
-        padding = padding + 1
+        ### padding
+        padding = 0
+        while (len(out) % 8 != 0 ):
+            zero = '0'
+            out = out + zero
+            padding = padding + 1
 
 
-    vip = bits2a(out)
+        vip = bits2a(out)
 
-    extension = os.path.splitext(filename)[0]
-    output_filename = extension + '.comp'
+        extension = os.path.splitext(filename)[0]
+        ext = os.path.splitext(filename)[1]
+        output_filename = extension + '.comp'
 
-    with open(output_filename, 'wb') as f:
-            pickle.dump([vip,codes,padding], f)
+        with open(output_filename, 'wb') as f:
+                pickle.dump([vip,codes,padding,ext], f)
 
-    uncompressed_size = os.path.getsize(filename)
-    compressed_size = os.path.getsize(output_filename)
-    #print(uncompressed_size)
-    #print(compressed_size)
-    print("Compression Ratio = ",end=" ")
-    print(uncompressed_size/compressed_size)
+        uncompressed_size = os.path.getsize(filename)
+        compressed_size = os.path.getsize(output_filename)
+        #print(uncompressed_size)
+        #print(compressed_size)
+        print("Compression Ratio = ",end=" ")
+        print(uncompressed_size/compressed_size)
 
-    print("Compressing Time: --- %s seconds ---" % (time.time() - start_time))
+        print("Compressing Time: --- %s seconds ---" % (time.time() - start_time))
 
 
 ### DECOMPRESS
@@ -190,14 +189,15 @@ def decompress(fileName):
     start_time = time.time()
 
     with open(fileName, 'rb') as f:
-        vip, dict, padding = pickle.load(f)
+        vip, dict, padding,ext = pickle.load(f)
 
     bits = a2bits(vip)
     temp = ''
 
     dict = {v: k for k, v in dict.items()}  # reversing the dict
 
-    with open("ouput", "wb") as o:
+    output_name = fileName + ext
+    with open(output_name, "wb") as o:
         for i in range(len(bits) - padding):
             temp = temp + bits[i]
             if temp in dict:
@@ -208,7 +208,19 @@ def decompress(fileName):
     print("Decompressing Time: --- %s seconds ---" % (time.time() - start_time))
 
 
+def file_compress(filename):
+    dict = {}
+    slash = '\\'
+    dir_list = []
+    dir_list.append(filename)
 
+    while len(dir_list) != 0:
+        current = dir_list.pop()
+        for root, dirs, files in os.walk(current):
+            dict[root] = files
+            for item in dirs:
+                temp = str(root) + slash + str(item)
+                dir_list.append(temp)
 
 
 if __name__ == '__main__':
