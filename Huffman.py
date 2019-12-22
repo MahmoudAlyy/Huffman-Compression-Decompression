@@ -3,6 +3,7 @@ import pickle
 import time
 import sys
 import os.path
+import os
 from Node import *
 import queue as Q
 
@@ -130,9 +131,12 @@ def countFreq(filename):
     return dict      
 
 
-### COMPRESS
+############# COMPRESS
 def compress(filename) :
     start_time = time.time()
+
+    
+    # os.path.isdir(fpath)
 
     dict = countFreq(filename)
 
@@ -170,6 +174,12 @@ def compress(filename) :
     with open(output_filename, 'wb') as f:
             pickle.dump([vip,codes,padding], f)
 
+    uncompressed_size = os.path.getsize(filename)
+    compressed_size = os.path.getsize(output_filename)
+    #print(uncompressed_size)
+    #print(compressed_size)
+    print("Compression Ratio = ",end=" ")
+    print(uncompressed_size/compressed_size)
 
     print("Compressing Time: --- %s seconds ---" % (time.time() - start_time))
 
