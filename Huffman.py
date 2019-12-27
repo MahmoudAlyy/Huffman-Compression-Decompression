@@ -178,8 +178,7 @@ def compress(filename) :
         #print(uncompressed_size)
         #print(compressed_size)
         print("Compression Ratio = ",end=" ")
-        print(uncompressed_size/compressed_size)
-
+        print(compressed_size/uncompressed_size)
         print("Compressing Time: --- %s seconds ---" % (time.time() - start_time))
 
 
@@ -221,7 +220,50 @@ def file_compress(filename):
             for item in dirs:
                 temp = str(root) + slash + str(item)
                 dir_list.append(temp)
+    print(dict)
+    
+    dictf ={}
+    for key in dict :
+       for f in dict[key]:
+           current = str(key) +'\\' + str(f)
+           print(current)
 
+           dictf[current] = single_file_compress(current)
+
+    print(dictf)
+
+
+def single_file_compress(filename):
+    dict = countFreq(filename)
+
+    ########## BASEMMMMMM
+    root = huffman(dict)[1]
+
+    huffTreeCode(root)
+
+    codes = saveCodes(root)
+    out = ''
+    with open(filename, "rb") as f:
+        byte = f.read(1)
+        while byte:
+            temp = codes[byte]
+            out = out + temp
+            byte = f.read(1)
+
+    ### padding
+    padding = 0
+    while (len(out) % 8 != 0):
+        zero = '0'
+        out = out + zero
+        padding = padding + 1
+
+    vip = bits2a(out)
+    list = []
+    list.append(vip)
+    list.append(codes)
+    list.append(padding)
+
+    return list
 
 if __name__ == '__main__':
 
